@@ -61,12 +61,13 @@ class Game:
     # Concretize a random value in the board
     def concretize_random_value(self):
         while True:
-            random_index = random.randint(0, 8)
+            i, j = random.randint(0, 2), random.randint(0, 2)
 
-            if self.board.flatten()[random_index].solved():
+            if self.board[i][j].solved():
                 continue
-
-            return self.board.flatten()[random_index].concretize_random_value()
+            else:
+                square_i, square_j = self.board[i][j].concretize_random_value()
+                return i, j, square_i, square_j
 
     # Check to see if the game board is completely solved
     def solved(self):
@@ -77,13 +78,13 @@ class Game:
         return True
 
     # Update the lists of possible values based off a decision
-    def update_board(self, i, j):
+    def update_board(self, game_i, game_j, square_i, square_j):
         pass
 
     def create_board(self):
         while self.solved() is False:
-            i, j = self.concretize_random_value()
-            self.update_board(i, j)
+            game_i, game_j, square_i, square_j = self.concretize_random_value()
+            self.update_board(game_i, game_j, square_i, square_j)
 
 
 if __name__ == '__main__':
