@@ -3,6 +3,16 @@ from main import Game, Square
 
 
 class TestGame(TestCase):
+    def test_init(self):
+        my_game = Game()
+        print(my_game)
+
+        my_game.board[0][0].array[0][2].remove(1)
+        print(my_game)
+
+        self.assertFalse(1 in my_game.board[0][0].array[0][2])
+        self.assertTrue(1 in my_game.board[0][0].array[0][0])
+
     def test_solved_false(self):
         my_game = Game()
         self.assertFalse(my_game.solved())
