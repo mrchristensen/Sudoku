@@ -25,13 +25,28 @@ class Square:
                 self.array[i][j] = {random.choice(tuple(self.array[i][j]))}
                 return i, j
 
-    def remove_possible_value(self, value):
+    def remove_possible_value_from_square(self, value):
         for i in range(3):
             for j in range(3):
                 if len(self.array[i][j]) > 1:
                     print(self.array[i][j], value, i, j)
                     print(self.array)
-                    self.array[i][j].remove(value)
+                    self.array[i][j].discard(value)
+
+    def remove_possible_from_row(self, value, row):
+        print("value to remove: ", value, "row: ", row)
+        print("square before:")
+        print(self)
+        for j in range(3):
+            if len(self.array[row][j]) > 1:
+                self.array[row][j].discard(value)
+        print("square after:")
+        print(self)
+
+    def remove_possible_from_col(self, value, col):
+        for i in range(3):
+            if len(self.array[i][col]) > 1:
+                self.array[i][col].discard(value)
 
     # Check to see if this square is solved
     def solved(self):
@@ -93,11 +108,14 @@ class Game:
         new_concrete_value = list(self.board[game_i][game_j].array[square_i][square_j])[0]
 
         # Remove possible value from square
-        self.board[game_i][game_j].remove_possible_value(new_concrete_value)
+        self.board[game_i][game_j].remove_possible_value_from_square(new_concrete_value)
 
         # Update all values in rows and cols to not have that possible value
+        for j in range(3):  # Remove rows
+            self.board[square_i][j].remove_possible_from_row(new_concrete_value, game_i)
 
-        pass
+        for i in range(3):  # Remove rows
+            self.board[i][square_j].remove_possible_from_col(new_concrete_value, game_j)
 
     def create_board(self):
         while self.solved() is False:
@@ -109,4 +127,5 @@ if __name__ == '__main__':
     my_game = Game()
     print(my_game)
     my_game.create_board()
+    print("Final game board: ")
     print(my_game)
