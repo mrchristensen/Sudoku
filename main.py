@@ -18,7 +18,7 @@ class Square:
                 continue
             else:
                 # Pick a random value from the set of possibilities
-                self.array[i][j] = random.choice(tuple(self.array[i][j]))
+                self.array[i][j] = {random.choice(tuple(self.array[i][j]))}
                 return i, j
 
     # Check to see if this square is solved
@@ -66,10 +66,7 @@ class Game:
             if self.board.flatten()[random_index].solved():
                 continue
 
-            i, j = self.board.flatten()[random_index].concretize_random_value()
-            break
-
-        self.update_board(i, j)
+            return self.board.flatten()[random_index].concretize_random_value()
 
     # Check to see if the game board is completely solved
     def solved(self):
@@ -83,14 +80,14 @@ class Game:
     def update_board(self, i, j):
         pass
 
-
-def print_hi(name):
-    my_game = Game()
-    print(my_game)
-    my_game.concretize_random_value()
-    print(my_game)
-    # print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    def create_board(self):
+        while self.solved() is False:
+            i, j = self.concretize_random_value()
+            self.update_board(i, j)
 
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    my_game = Game()
+    print(my_game)
+    my_game.create_board()
+    print(my_game)
