@@ -4,7 +4,11 @@ import numpy as np
 
 class Square:
     def __init__(self):
-        self.array = np.full((3, 3), {1, 2, 3, 4, 5, 6, 7, 8, 9})
+        self.array = np.empty((3, 3), dtype=set)
+
+        for i in range(3):
+            for j in range(3):
+                self.array[i][j] = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
     def __str__(self):
         return str(self.array)
