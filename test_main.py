@@ -17,7 +17,18 @@ class TestGame(TestCase):
         print(my_game)
         self.assertTrue(my_game.solved())
 
+
 class TestSquare(TestCase):
+    def test_init(self):
+        my_square = Square()
+        print(my_square)
+
+        my_square.array[0][0].remove(1)
+        print(my_square)
+
+        self.assertFalse(1 in my_square.array[0][0])
+        self.assertTrue(1 in my_square.array[1][1])
+
     def test_solved_false(self):
         my_square = Square()
 
@@ -28,3 +39,4 @@ class TestSquare(TestCase):
         my_square.array[:][:] = {1}
 
         self.assertTrue(my_square.solved())
+
