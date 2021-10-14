@@ -1,6 +1,8 @@
 import random
 import numpy as np
 
+infinity = 10  # Infinite weight because the most possible entropy will be 9
+
 
 class Square:
     def __init__(self):
@@ -13,35 +15,42 @@ class Square:
     def __str__(self):
         return str(self.array)
 
-    # Concretize a random value in this square
-    def concretize_random_value(self):
-        while True:
-            i, j = random.randint(0, 2), random.randint(0, 2)
+    def get_lowest_entropy_index(self):
+        lowest_found_entropy = infinity
+        square_i, square_j = None, None
 
-            if len(self.array[i][j]) == 1:  # if the set possible values is just 1 then find another value
-                continue
-            else:
-                # Pick a random value from the set of possibilities
-                self.array[i][j] = {random.choice(tuple(self.array[i][j]))}
-                return i, j
+        for i in range(3):
+            for j in range(3):
+                entropy = len(self.array[i][j])
+
+                if 1 < entropy < lowest_found_entropy:
+                    lowest_found_entropy = entropy
+                    square_i = i
+                    square_j = j
+
+        return lowest_found_entropy, square_i, square_j
+
+    # Concretize a random value in this square
+    def colapse_value(self, i, j):
+        self.array[i][j] = {random.choice(tuple(self.array[i][j]))}
 
     def remove_possible_value_from_square(self, value):
         for i in range(3):
             for j in range(3):
                 if len(self.array[i][j]) > 1:
-                    print(self.array[i][j], value, i, j)
-                    print(self.array)
+                    # print(self.array[i][j], value, i, j)
+                    # print(self.array)
                     self.array[i][j].discard(value)
 
     def remove_possible_from_row(self, value, row):
-        print("value to remove: ", value, "row: ", row)
-        print("square before:")
-        print(self)
+        # print("value to remove: ", value, "row: ", row)
+        # print("square before:")
+        # print(self)
         for j in range(3):
             if len(self.array[row][j]) > 1:
                 self.array[row][j].discard(value)
-        print("square after:")
-        print(self)
+        # print("square after:")
+        # print(self)
 
     def remove_possible_from_col(self, value, col):
         for i in range(3):
@@ -63,9 +72,9 @@ class Game:
         for row in range(self.board.shape[0]):
             for col in range(self.board.shape[1]):
                 self.board[row][col] = Square()
-                print("self.board: ", self.board)
+                # print("self.board: ", self.board)
 
-        print("Initial board: ", self.board)
+        # print("Initial board: ", self.board)
 
     def __str__(self):
         ret_string = ""
@@ -85,15 +94,26 @@ class Game:
         return ret_string
 
     # Concretize a random value in the board
-    def concretize_random_value(self):
-        while True:
-            i, j = random.randint(0, 2), random.randint(0, 2)
+    def colapse_lowest_entropy_value(self):
+        lowest_found_entropy = infinity
+        game_i, game_j = None, None
+        square_i, square_j = None, None
 
-            if self.board[i][j].solved():
-                continue
-            else:
-                square_i, square_j = self.board[i][j].concretize_random_value()
-                return i, j, square_i, square_j
+        for new_game_i in range(3):
+            for new_game_j in range(3):
+                new_entropy, new_square_i, new_square_j = self.board[new_game_i][new_game_j].get_lowest_entropy_index()
+
+                # Find the spot with the fewest number of possible values (excluding cells that are already colapsed to a single value
+                if lowest_found_entropy > new_entropy > 1:
+                    print("new lowest entropy: ", new_entropy)
+                    lowest_found_entropy = new_entropy
+                    game_i = new_game_i
+                    game_j = new_game_j
+                    square_i = new_square_i
+                    square_j = new_square_j
+
+        self.board[game_i][game_j].colapse_value(square_i, square_j)
+        return game_i, game_j, square_i, square_j
 
     # Check to see if the game board is completely solved
     def solved(self):
@@ -119,12 +139,15 @@ class Game:
 
     def create_board(self):
         while self.solved() is False:
-            game_i, game_j, square_i, square_j = self.concretize_random_value()
+            game_i, game_j, square_i, square_j = self.colapse_lowest_entropy_value()
             self.update_board(game_i, game_j, square_i, square_j)
+            print("Newly updateed board:")
+            print(self)
 
 
 if __name__ == '__main__':
     my_game = Game()
+    print("Initial game board: ")
     print(my_game)
     my_game.create_board()
     print("Final game board: ")
