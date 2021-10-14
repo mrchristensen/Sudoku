@@ -25,6 +25,14 @@ class Square:
                 self.array[i][j] = {random.choice(tuple(self.array[i][j]))}
                 return i, j
 
+    def remove_possible_value(self, value):
+        for i in range(3):
+            for j in range(3):
+                if len(self.array[i][j]) > 1:
+                    print(self.array[i][j], value, i, j)
+                    print(self.array)
+                    self.array[i][j].remove(value)
+
     # Check to see if this square is solved
     def solved(self):
         for value in self.array.flatten():
@@ -42,7 +50,6 @@ class Game:
                 self.board[row][col] = Square()
                 print("self.board: ", self.board)
 
-        # self.board[:][:] = Square()
         print("Initial board: ", self.board)
 
     def __str__(self):
@@ -83,6 +90,13 @@ class Game:
 
     # Update the lists of possible values based off a decision
     def update_board(self, game_i, game_j, square_i, square_j):
+        new_concrete_value = list(self.board[game_i][game_j].array[square_i][square_j])[0]
+
+        # Remove possible value from square
+        self.board[game_i][game_j].remove_possible_value(new_concrete_value)
+
+        # Update all values in rows and cols to not have that possible value
+
         pass
 
     def create_board(self):
